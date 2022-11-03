@@ -114,10 +114,16 @@ QueueBase::GetCurrentSize (void) const
 
   if (m_maxSize.GetUnit () == QueueSizeUnit::PACKETS)
     {
+      //return QueueSize (QueueSizeUnit::PACKETS, m_maxSize);
+      //QueueBase ()
+      //m_nPackets << m_maxSize.GetValue();
+      NS_LOG_FUNCTION("GetCurrentSize: " << m_nPackets);
       return QueueSize (QueueSizeUnit::PACKETS, m_nPackets);
     }
   if (m_maxSize.GetUnit () == QueueSizeUnit::BYTES)
     {
+      //return QueueSize (QueueSizeUnit::BYTES, m_maxSize);
+      //m_nBytes << m_maxSize.GetValue();
       return QueueSize (QueueSizeUnit::BYTES, m_nBytes);
     }
   NS_ABORT_MSG ("Unknown queue size unit");
@@ -214,6 +220,16 @@ QueueBase::SetMaxSize (QueueSize size)
 
   m_maxSize = size;
 
+/*
+  if (m_maxSize.GetUnit () == QueueSizeUnit::PACKETS)
+    {
+      m_nPackets << m_maxSize.GetValue();
+    }
+  if (m_maxSize.GetUnit () == QueueSizeUnit::BYTES)
+    {
+      m_nBytes << m_maxSize.GetValue();
+    }
+*/
   NS_ABORT_MSG_IF (size < GetCurrentSize (),
                    "The new maximum queue size cannot be less than the current size");
 }
@@ -222,6 +238,11 @@ QueueSize
 QueueBase::GetMaxSize (void) const
 {
   NS_LOG_FUNCTION (this);
+  
+  //NS_LOG_FUNCTION("MaxQueueByte: " << m_nBytes);
+  //NS_LOG_FUNCTION("MaxQueuePacket: " << m_nPackets);
+  //NS_LOG_FUNCTION("MaxQueueSize: " << m_maxSize);
+ 
   return m_maxSize;
 }
 

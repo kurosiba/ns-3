@@ -30,7 +30,9 @@ void TraceThroughput(Ptr<Application> app, Ptr<OutputStreamWrapper> stream)
 int main(int argc, char *argv[])
 {
   LogComponentEnable("minumum", LOG_LEVEL_ALL);
-  // LogComponentEnable("BbrState", LOG_LEVEL_ALL);
+  //LogComponentEnable("BbrState", LOG_LEVEL_ALL);
+  LogComponentEnable("Queue", LOG_LEVEL_ALL);
+
   CommandLine cmd;
   cmd.Parse(argc, argv);
 
@@ -52,7 +54,7 @@ int main(int argc, char *argv[])
   PointToPointHelper LinkBottoleNeck;
   LinkBottoleNeck.SetDeviceAttribute("DataRate", StringValue("10Mbps")); // リンク帯域幅
   LinkBottoleNeck.SetChannelAttribute("Delay", StringValue("20ms"));     // リンクの片方向遅延
-  //LinkBottoleNeck.SetQueue("ns3::QueueBase::MaxSize", "MaxSize", StringValue("50p"));
+  //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "MaxSize", QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, 50)));
   //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "Mode", EnumValue(QueueBase::QUEUE_MODE_PACKETS), "MaxPackets", UintegerValue(50));
   //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "Mode", EnumValue(QueueBase::QUEUE_MODE_BYTES), "MaxBytes", UintegerValue(bdp));
 
@@ -66,8 +68,9 @@ int main(int argc, char *argv[])
 
   Ipv4AddressHelper address;
   address.SetBase("10.0.0.0", "255.255.255.0");
-
+  
   NetDeviceContainer devices;
+
   /* router 同士の接続 */
   devices = LinkBottoleNeck.Install(routers.Get(0), routers.Get(1));
   address.NewNetwork();
@@ -76,9 +79,17 @@ int main(int argc, char *argv[])
   /* sourcesの接続 */
   for (uint32_t i = 0; i < sources.GetN(); i++)
   {
+    /*
+    TrafficControlHelper tch;
+    tch.SetRootQueueDisc ("ns3::PfifoFastQueueDisc", "Limit", UintegerValue (1000)); 
+    tch.Install (devices);
+    */
+
     devices = Link100Mbps20ms.Install(sources.Get(i), routers.Get(0));
     address.NewNetwork();
     address.Assign(devices);
+
+    
   }
 
   /* attackersの接続 */

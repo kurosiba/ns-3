@@ -205,8 +205,10 @@ public:
 
 private:
   TracedValue<uint32_t> m_nBytes;               //!< Number of bytes in the queue
+  //uint32_t m_nBytes;
   uint32_t m_nTotalReceivedBytes;               //!< Total received bytes
   TracedValue<uint32_t> m_nPackets;             //!< Number of packets in the queue
+  //uint32_t m_nPackets;
   uint32_t m_nTotalReceivedPackets;             //!< Total received packets
   uint32_t m_nTotalDroppedBytes;                //!< Total dropped bytes
   uint32_t m_nTotalDroppedBytesBeforeEnqueue;   //!< Total dropped bytes before enqueue
