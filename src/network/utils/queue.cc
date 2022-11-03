@@ -109,6 +109,7 @@ QueueBase::GetNPackets (void) const
 {
   NS_LOG_FUNCTION (this);
   NS_LOG_LOGIC ("returns " << m_nPackets);
+  //NS_LOG_FUNCTION("GetNPackets: " << m_nPackets);
   return m_nPackets;
 }
 

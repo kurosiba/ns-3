@@ -30,7 +30,7 @@ void TraceThroughput(Ptr<Application> app, Ptr<OutputStreamWrapper> stream)
 int main(int argc, char *argv[])
 {
   LogComponentEnable("minumum", LOG_LEVEL_ALL);
-  //LogComponentEnable("Queue", LOG_LEVEL_ALL);
+  LogComponentEnable("Queue", LOG_LEVEL_ALL);
   // LogComponentEnable("BbrState", LOG_LEVEL_ALL);
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
   LinkBottoleNeck.SetDeviceAttribute("DataRate", StringValue("10Mbps")); // リンク帯域幅
   LinkBottoleNeck.SetChannelAttribute("Delay", StringValue("20ms"));     // リンクの片方向遅延
   //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "MaxSize", QueueSizeValue(QueueSize("50p")));
-  LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "Mode", EnumValue(QueueBase::QUEUE_MODE_PACKETS), "MaxPackets", UintegerValue(50));
+  //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "Mode", EnumValue(QueueBase::QUEUE_MODE_PACKETS), "MaxPackets", UintegerValue(50));
   // LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "Mode", EnumValue(QueueBase::QUEUE_MODE_BYTES), "MaxBytes", UintegerValue(bdp));
 
   PointToPointHelper Link100Mbps20ms;
@@ -115,7 +115,7 @@ int main(int argc, char *argv[])
   // UDP On-Off Application - Application used by attacker (eve) to create the low-rate bursts.
   bool shrew = true;
   const int udp_sink_port = 5000;
-  const std::string attacker_rate = "6250kbps";
+  const std::string attacker_rate = "62500kbps";
   const double attacker_start = 5.0; // シミュレーションで攻撃が開始する時間
   const float burst_period = 1.0;    // バースト間隔T
   const std::string on_time = "0.3"; // バースト長L
@@ -155,8 +155,6 @@ int main(int argc, char *argv[])
   NS_LOG_INFO("attacker: " << attackers.Get(0)->GetId());
   NS_LOG_INFO("Bottleneck router(0) : " << routers.Get(0)->GetId());
   NS_LOG_INFO("Bottleneck router(1) : " << routers.Get(1)->GetId());
-
-  NS_LOG_INFO(ns3::Queue::PacketsInQueue);
 
   Simulator::Stop(Seconds(max_simu_time));
   Simulator::Run();
