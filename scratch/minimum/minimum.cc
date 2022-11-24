@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 {
   LogComponentEnable("minumum", LOG_LEVEL_ALL);
   //LogComponentEnable("BbrState", LOG_LEVEL_ALL);
-  LogComponentEnable("Queue", LOG_LEVEL_ALL);
+  //LogComponentEnable("Queue", LOG_LEVEL_ALL);
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -54,14 +54,16 @@ int main(int argc, char *argv[])
   PointToPointHelper LinkBottoleNeck;
   LinkBottoleNeck.SetDeviceAttribute("DataRate", StringValue("10Mbps")); // リンク帯域幅
   LinkBottoleNeck.SetChannelAttribute("Delay", StringValue("20ms"));     // リンクの片方向遅延
-  //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "MaxSize", QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, 50)));
+  //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "MaxSize", QueueSizeValue (QueueSize (QueueSizeUnit::BYTES, 1000000)));
+  LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "MaxSize", QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, 50)));
   //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "Mode", EnumValue(QueueBase::QUEUE_MODE_PACKETS), "MaxPackets", UintegerValue(50));
   //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "Mode", EnumValue(QueueBase::QUEUE_MODE_BYTES), "MaxBytes", UintegerValue(bdp));
 
   PointToPointHelper Link100Mbps20ms;
-  Link100Mbps20ms.SetDeviceAttribute("DataRate", StringValue("100Mbps"));
+  Link100Mbps20ms.SetDeviceAttribute("DataRate", StringValue("10Mbps"));
   Link100Mbps20ms.SetChannelAttribute("Delay", StringValue("20ms"));
   // LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "Mode", EnumValue(QueueBase::QUEUE_MODE_BYTES), "MaxBytes", UintegerValue(bdp));
+  //Link100Mbps20ms.SetQueue("ns3::DropTailQueue", "MaxSize", QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, 50)));
 
   InternetStackHelper stack;
   stack.InstallAll();
@@ -127,7 +129,7 @@ int main(int argc, char *argv[])
   // UDP On-Off Application - Application used by attacker (eve) to create the low-rate bursts.
   bool shrew = true;
   const int udp_sink_port = 5000;
-  const std::string attacker_rate = "62500kbps";
+  const std::string attacker_rate = "1000000kbps";//62500kbps
   const double attacker_start = 5.0; // シミュレーションで攻撃が開始する時間
   const float burst_period = 1.0;    // バースト間隔T
   const std::string on_time = "0.3"; // バースト長L

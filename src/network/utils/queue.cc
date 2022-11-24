@@ -115,7 +115,6 @@ QueueBase::GetCurrentSize (void) const
   if (m_maxSize.GetUnit () == QueueSizeUnit::PACKETS)
     {
       //return QueueSize (QueueSizeUnit::PACKETS, m_maxSize);
-      //QueueBase ()
       //m_nPackets << m_maxSize.GetValue();
       NS_LOG_FUNCTION("GetCurrentSize: " << m_nPackets);
       return QueueSize (QueueSizeUnit::PACKETS, m_nPackets);
