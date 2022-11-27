@@ -30,7 +30,6 @@ void TraceThroughput(Ptr<Application> app, Ptr<OutputStreamWrapper> stream)
 int main(int argc, char *argv[])
 {
   LogComponentEnable("minumum", LOG_LEVEL_ALL);
-  //LogComponentEnable("BbrState", LOG_LEVEL_ALL);
   //LogComponentEnable("Queue", LOG_LEVEL_ALL);
 
   CommandLine cmd;
@@ -60,7 +59,7 @@ int main(int argc, char *argv[])
   //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "Mode", EnumValue(QueueBase::QUEUE_MODE_BYTES), "MaxBytes", UintegerValue(bdp));
 
   PointToPointHelper Link100Mbps20ms;
-  Link100Mbps20ms.SetDeviceAttribute("DataRate", StringValue("10Mbps"));
+  Link100Mbps20ms.SetDeviceAttribute("DataRate", StringValue("100Mbps"));
   Link100Mbps20ms.SetChannelAttribute("Delay", StringValue("20ms"));
   // LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "Mode", EnumValue(QueueBase::QUEUE_MODE_BYTES), "MaxBytes", UintegerValue(bdp));
   //Link100Mbps20ms.SetQueue("ns3::DropTailQueue", "MaxSize", QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, 50)));
@@ -80,18 +79,10 @@ int main(int argc, char *argv[])
 
   /* sourcesの接続 */
   for (uint32_t i = 0; i < sources.GetN(); i++)
-  {
-    /*
-    TrafficControlHelper tch;
-    tch.SetRootQueueDisc ("ns3::PfifoFastQueueDisc", "Limit", UintegerValue (1000)); 
-    tch.Install (devices);
-    */
-
+  {    
     devices = Link100Mbps20ms.Install(sources.Get(i), routers.Get(0));
     address.NewNetwork();
-    address.Assign(devices);
-
-    
+    address.Assign(devices);    
   }
 
   /* attackersの接続 */
@@ -129,7 +120,7 @@ int main(int argc, char *argv[])
   // UDP On-Off Application - Application used by attacker (eve) to create the low-rate bursts.
   bool shrew = true;
   const int udp_sink_port = 5000;
-  const std::string attacker_rate = "1000000kbps";//62500kbps
+  const std::string attacker_rate = "62500kbps";//62500kbps
   const double attacker_start = 5.0; // シミュレーションで攻撃が開始する時間
   const float burst_period = 1.0;    // バースト間隔T
   const std::string on_time = "0.3"; // バースト長L
