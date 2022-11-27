@@ -30,22 +30,7 @@ void TraceThroughput(Ptr<Application> app, Ptr<OutputStreamWrapper> stream)
 int main(int argc, char *argv[])
 {
   LogComponentEnable("minumum", LOG_LEVEL_ALL);
-  // LogComponentEnable("QuicHelper", LOG_LEVEL_ALL);
-  // LogComponentEnable("QuicCongestionControl", LOG_LEVEL_ALL);
-  // LogComponentEnable("QuicL4Protocol", LOG_LEVEL_ALL);
-  // LogComponentEnable("QuicL5Protocol", LOG_LEVEL_ALL);
-  // LogComponentEnable("QuicSocketBase", LOG_LEVEL_ALL);
-  // LogComponentEnable("QuicSocketFactory", LOG_LEVEL_ALL);
-  // LogComponentEnable("QuicSocketRxBuffer", LOG_LEVEL_ALL);
-  // LogComponentEnable("QuicSocketTxBuffer", LOG_LEVEL_ALL);
-  // LogComponentEnable("QuicSocket", LOG_LEVEL_ALL);
-  // LogComponentEnable("QuicStreamBase", LOG_LEVEL_ALL);
-  // LogComponentEnable("QuicStreamRxBuffer", LOG_LEVEL_ALL);
-  // LogComponentEnable("QuicStreamTxBuffer", LOG_LEVEL_ALL);
-  // LogComponentEnable("QuicStream", LOG_LEVEL_ALL);
-  // LogComponentEnable("QuicSubheader", LOG_LEVEL_ALL);
-  // LogComponentEnable("QuicTransportParameters", LOG_LEVEL_ALL);
-  // LogComponentEnable("QuicHeader", LOG_LEVEL_ALL);
+  //LogComponentEnable("Queue", LOG_LEVEL_ALL);
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
