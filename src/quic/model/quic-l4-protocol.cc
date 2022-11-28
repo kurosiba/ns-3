@@ -75,7 +75,6 @@ QuicUdpBinding::QuicUdpBinding ()
 QuicUdpBinding::~QuicUdpBinding ()
 {
   NS_LOG_FUNCTION(this);
-
   m_budpSocket = 0;
   m_budpSocket6 = 0;
   m_quicSocket = nullptr;
