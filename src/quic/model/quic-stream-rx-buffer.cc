@@ -73,8 +73,10 @@ QuicStreamRxBuffer::GetTypeId (void)
 {
   NS_LOG_UNCOND("QuicStreamRxBuffer::GetTypeId");
   static TypeId tid =
-    TypeId ("ns3::QuicStreamRxBuffer").SetParent<Object> ().SetGroupName (
-      "Internet").AddConstructor<QuicStreamRxBuffer> ();
+    TypeId ("ns3::QuicStreamRxBuffer")
+      .SetParent<Object> ()
+      .SetGroupName ("Internet")
+      .AddConstructor<QuicStreamRxBuffer> ();
   return tid;
 }
 

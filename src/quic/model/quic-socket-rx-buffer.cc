@@ -72,8 +72,10 @@ QuicSocketRxBuffer::GetTypeId (void)
 {
   NS_LOG_UNCOND("QuicSocketRxBuffer::GetTypeId");
   static TypeId tid =
-    TypeId ("ns3::QuicSocketRxBuffer").SetParent<Object> ().SetGroupName (
-      "Internet").AddConstructor<QuicSocketRxBuffer> ();
+    TypeId ("ns3::QuicSocketRxBuffer")
+      .SetParent<Object> ()
+      .SetGroupName ("Internet")
+      .AddConstructor<QuicSocketRxBuffer> ();
   return tid;
 }
 
