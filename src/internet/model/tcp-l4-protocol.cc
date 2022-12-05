@@ -67,6 +67,7 @@ const uint8_t TcpL4Protocol::PROT_NUMBER = 6;
 TypeId
 TcpL4Protocol::GetTypeId (void)
 {
+  
   static TypeId tid = TypeId ("ns3::TcpL4Protocol")
     .SetParent<IpL4Protocol> ()
     .SetGroupName ("Internet")

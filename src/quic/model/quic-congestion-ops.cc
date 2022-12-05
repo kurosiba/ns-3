@@ -43,6 +43,7 @@ NS_OBJECT_ENSURE_REGISTERED (QuicCongestionOps);
 TypeId
 QuicCongestionOps::GetTypeId (void)
 {
+  NS_LOG_UNCOND("QuicCongestionOps::GetTypeId");
   static TypeId tid = TypeId ("ns3::QuicCongestionControl").SetParent<
       TcpNewReno> ().SetGroupName ("Internet").AddConstructor<
       QuicCongestionOps> ();

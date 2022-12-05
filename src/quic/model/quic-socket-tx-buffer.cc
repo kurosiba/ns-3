@@ -98,6 +98,7 @@ NS_OBJECT_ENSURE_REGISTERED (QuicSocketTxBuffer);
 TypeId
 QuicSocketTxBuffer::GetTypeId (void)
 {
+  NS_LOG_UNCOND("QuicSocketTxBuffer::GetTypeId");
   static TypeId tid =
     TypeId ("ns3::QuicSocketTxBuffer").SetParent<Object> ().SetGroupName (
       "Internet").AddConstructor<QuicSocketTxBuffer> ()

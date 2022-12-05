@@ -84,6 +84,7 @@ QuicSocketBase::GetInstanceTypeId () const
 TypeId
 QuicSocketBase::GetTypeId (void)
 {
+  NS_LOG_UNCOND("QuicSocketBase::GetTypeId");
   static TypeId tid = TypeId ("ns3::QuicSocketBase")
     .SetParent<QuicSocket> ()
     .SetGroupName ("Internet")
@@ -298,6 +299,7 @@ QuicSocketBase::GetTypeId (void)
 TypeId
 QuicSocketState::GetTypeId (void)
 {
+  NS_LOG_UNCOND("QuicSocketState::GetTypeId");
   static TypeId tid =
     TypeId ("ns3::QuicSocketState")
     .SetParent<TcpSocketState> ()

@@ -30,6 +30,20 @@ void TraceThroughput(Ptr<Application> app, Ptr<OutputStreamWrapper> stream)
 int main(int argc, char *argv[])
 {
   LogComponentEnable("minumum", LOG_LEVEL_ALL);
+  
+   LogComponentEnableAll(LOG_PREFIX_FUNC);
+   LogComponentEnableAll(LOG_PREFIX_TIME);
+  // LogComponentEnableAll(LOG_PREFIX_NODE);
+  // LogComponentEnableAll(LOG_PREFIX_LEVEL);
+  // LogComponentEnableAll(LOG_PREFIX_ALL);
+
+  // LogComponentEnable("IpL4Protocol", LOG_LEVEL_ALL);
+  // LogComponentEnable("Socket", LOG_LEVEL_ALL);
+  
+  // LogComponentEnable("QuicClient", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicEchoClientApplication", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicEchoServerApplication", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicServer", LOG_LEVEL_ALL);
   // LogComponentEnable("QuicHelper", LOG_LEVEL_ALL);
   // LogComponentEnable("QuicCongestionControl", LOG_LEVEL_ALL);
   // LogComponentEnable("QuicL4Protocol", LOG_LEVEL_ALL);
@@ -117,7 +131,7 @@ int main(int argc, char *argv[])
 
   const int tcp_sink_port = 3000;
   const uint128_t bulk_send_max_bytes = 1 << 30;
-  const double max_simu_time = 65.0;
+   const double max_simu_time = 30.0;//65.0
 
   // TCPを送信する設定
   BulkSendHelper bulkSend("ns3::TcpSocketFactory", InetSocketAddress(interface.GetAddress(1), tcp_sink_port));
@@ -175,6 +189,9 @@ int main(int argc, char *argv[])
   NS_LOG_INFO("attacker: " << attackers.Get(0)->GetId());
   NS_LOG_INFO("Bottleneck router(0) : " << routers.Get(0)->GetId());
   NS_LOG_INFO("Bottleneck router(1) : " << routers.Get(1)->GetId());
+
+  //NS_LOG_INFO("source: " << sources.Get(0)->GetApplication());
+  //NS_LOG_INFO("sink: " << sinks.Get(0)->GetApplication());
 
   Simulator::Stop(Seconds(max_simu_time));
   Simulator::Run();

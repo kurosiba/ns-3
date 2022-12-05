@@ -35,6 +35,7 @@ NS_OBJECT_ENSURE_REGISTERED (QuicSocketFactory);
 
 TypeId QuicSocketFactory::GetTypeId (void)
 {
+  NS_LOG_UNCOND("TypeId QuicSocketFactory::GetTypeId");
   static TypeId tid = TypeId ("ns3::QuicSocketFactory")
     .SetParent<SocketFactory> ()
     .SetGroupName ("Internet")

@@ -54,6 +54,7 @@ QuicHeader::~QuicHeader ()
 std::string
 QuicHeader::TypeToString () const
 {
+  NS_LOG_UNCOND("QuicHeader::TypeToString");
   static const char* longTypeNames[6] = {
     "Version Negotiation",
     "Initial",
@@ -62,6 +63,7 @@ QuicHeader::TypeToString () const
     "0-RTT Protected",
     "None"
   };
+
   static const char* shortTypeNames[4] = {
     "1 Octet",
     "2 Octets",
@@ -84,6 +86,7 @@ QuicHeader::TypeToString () const
 TypeId
 QuicHeader::GetTypeId (void)
 {
+  NS_LOG_UNCOND("QuicHeader::GetTypeId");
   static TypeId tid = TypeId ("ns3::QuicHeader")
     .SetParent<Header> ()
     .SetGroupName ("Internet")

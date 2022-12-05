@@ -83,6 +83,7 @@ NS_OBJECT_ENSURE_REGISTERED (QuicStreamTxBuffer);
 TypeId
 QuicStreamTxBuffer::GetTypeId (void)
 {
+  NS_LOG_UNCOND("QuicStreamTxBuffer::GetTypeId");
   static TypeId tid = TypeId ("ns3::QuicStreamTxBuffer")
     .SetParent<Object> ()
     .SetGroupName ("Internet")

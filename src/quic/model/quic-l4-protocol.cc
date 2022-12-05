@@ -84,6 +84,7 @@ QuicUdpBinding::~QuicUdpBinding ()
 TypeId
 QuicUdpBinding::GetTypeId (void)
 {
+  NS_LOG_UNCOND("(upper)QuicL4Protocol::GetTypeId");
   static TypeId tid = TypeId ("ns3::QuicUdpBinding")
     .SetParent<Object> ()
     .SetGroupName ("Internet")
@@ -93,13 +94,14 @@ QuicUdpBinding::GetTypeId (void)
                    MakePointerAccessor (&QuicUdpBinding::m_quicSocket),
                    MakePointerChecker<QuicSocketBase> ())
     ;
-  NS_LOG_UNCOND("QuicUdpBinding");
+  NS_LOG_UNCOND("QuicUdpBinding");  
   return tid;
 }
 
 TypeId 
 QuicUdpBinding::GetInstanceTypeId (void) const
 {
+  NS_LOG_UNCOND("QuicUdpBinding::GetInstanceTypeId");
   return GetTypeId();
 }
 
@@ -115,6 +117,7 @@ const uint8_t QuicL4Protocol::PROT_NUMBER = 143;
 TypeId
 QuicL4Protocol::GetTypeId (void)
 {
+  NS_LOG_UNCOND("(lower)QuicL4Protocol::GetTypeId");
   static TypeId tid = TypeId ("ns3::QuicL4Protocol")
     .SetParent<IpL4Protocol> ()
     .SetGroupName ("Internet")
@@ -154,7 +157,7 @@ QuicL4Protocol::QuicL4Protocol ()
 {
   NS_LOG_FUNCTION_NOARGS ();
   NS_LOG_LOGIC ("Created QuicL4Protocol object " << this);
-  
+  NS_LOG_UNCOND("QuicL4Protocol::QuicL4Protocol");
   m_quicUdpBindingList = QuicUdpBindingList ();
 }
 
@@ -162,22 +165,30 @@ QuicL4Protocol::~QuicL4Protocol ()
 {
   NS_LOG_FUNCTION (this);
   m_quicUdpBindingList.clear();
+  NS_LOG_UNCOND("QuicL4Protocol::~QuicL4Protocol");
 }
 
+
+/*
+nodeをセットする関数
+*/
 void
 QuicL4Protocol::SetNode (Ptr<Node> node)
 {
   NS_LOG_FUNCTION (this);
   NS_LOG_FUNCTION (this << node);
-
+  NS_LOG_UNCOND("QuicL4Protocol::SetNode");
   m_node = node;
 }
 
+/*
+udpSocket->Bind ();をして返却する関数
+*/
 int
 QuicL4Protocol::UdpBind (Ptr<QuicSocketBase> socket)
 {
   NS_LOG_FUNCTION (this << socket);
-
+  NS_LOG_UNCOND("QuicL4Protocol::UdpBind");
   int res = -1;
   QuicUdpBindingList::iterator it;
   for (it = m_quicUdpBindingList.begin (); it != m_quicUdpBindingList.end (); ++it)
@@ -199,7 +210,7 @@ int
 QuicL4Protocol::UdpBind6 (Ptr<QuicSocketBase> socket)
 {
   NS_LOG_FUNCTION (this << socket);
-
+  NS_LOG_UNCOND("QuicL4Protocol::UdpBind6");
   int res = -1;
   QuicUdpBindingList::iterator it;
   for (it = m_quicUdpBindingList.begin (); it != m_quicUdpBindingList.end (); ++it)
@@ -221,7 +232,7 @@ int
 QuicL4Protocol::UdpBind (const Address &address, Ptr<QuicSocketBase> socket)
 {
   NS_LOG_FUNCTION (this << address << socket);
-
+  NS_LOG_UNCOND("QuicL4Protocol::UdpBind");
   int res = -1;
   if (InetSocketAddress::IsMatchingType (address))
     {
@@ -263,6 +274,7 @@ QuicL4Protocol::UdpBind (const Address &address, Ptr<QuicSocketBase> socket)
 int
 QuicL4Protocol::UdpConnect (const Address & address, Ptr<QuicSocketBase> socket)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::UdpConnect");
   NS_LOG_FUNCTION (this << address << socket);
   if (InetSocketAddress::IsMatchingType (address) == true)
     {
@@ -304,6 +316,7 @@ QuicL4Protocol::UdpConnect (const Address & address, Ptr<QuicSocketBase> socket)
 int
 QuicL4Protocol::UdpSend (Ptr<Socket> udpSocket, Ptr<Packet> p, uint32_t flags) const
 {
+  NS_LOG_UNCOND("QuicL4Protocol::UdpSend");
   NS_LOG_FUNCTION (this << udpSocket);
 
   return udpSocket->Send (p, flags);
@@ -313,6 +326,7 @@ Ptr<Packet>
 QuicL4Protocol::UdpRecv (Ptr<Socket> udpSocket, uint32_t maxSize, uint32_t flags, Address &address)
 {
   NS_LOG_FUNCTION (this);
+  NS_LOG_UNCOND("QuicL4Protocol::UdpRecv");
 
   return udpSocket->RecvFrom (maxSize, flags, address);
 }
@@ -321,6 +335,7 @@ uint32_t
 QuicL4Protocol::GetTxAvailable (Ptr<QuicSocketBase> quicSocket) const
 {
   NS_LOG_FUNCTION (this);
+  NS_LOG_UNCOND("QuicL4Protocol::GetTxAvailable");
 
   QuicUdpBindingList::const_iterator it;
   for (it = m_quicUdpBindingList.begin (); it != m_quicUdpBindingList.end (); ++it)
@@ -338,6 +353,7 @@ uint32_t
 QuicL4Protocol::GetRxAvailable (Ptr<QuicSocketBase> quicSocket) const
 {
   NS_LOG_FUNCTION (this);
+  NS_LOG_UNCOND("QuicL4Protocol::GetRxAvailable");
 
   QuicUdpBindingList::const_iterator it;
   for (it = m_quicUdpBindingList.begin (); it != m_quicUdpBindingList.end (); ++it)
@@ -355,6 +371,7 @@ int
 QuicL4Protocol::GetSockName (const ns3::QuicSocketBase* quicSocket, Address &address) const
 {
   NS_LOG_FUNCTION (this);
+  NS_LOG_UNCOND("QuicL4Protocol::GetSockName");
 
   QuicUdpBindingList::const_iterator it;
   for (it = m_quicUdpBindingList.begin (); it != m_quicUdpBindingList.end (); ++it)
@@ -373,6 +390,7 @@ int
 QuicL4Protocol::GetPeerName (const ns3::QuicSocketBase* quicSocket, Address &address) const
 {
   NS_LOG_FUNCTION (this);
+  NS_LOG_UNCOND("QuicL4Protocol::GetPeerName");
 
   QuicUdpBindingList::const_iterator it;
   for (it = m_quicUdpBindingList.begin (); it != m_quicUdpBindingList.end (); ++it)
@@ -391,6 +409,7 @@ void
 QuicL4Protocol::BindToNetDevice (Ptr<QuicSocketBase> quicSocket, Ptr<NetDevice> netdevice)
 {
   NS_LOG_FUNCTION (this);
+  NS_LOG_UNCOND("QuicL4Protocol::BindToNetDevice");
 
   QuicUdpBindingList::iterator it;
   for (it = m_quicUdpBindingList.begin (); it != m_quicUdpBindingList.end (); ++it)
@@ -407,6 +426,7 @@ bool
 QuicL4Protocol::SetListener (Ptr<QuicSocketBase> sock)
 {
   NS_LOG_FUNCTION(this);
+  NS_LOG_UNCOND("QuicL4Protocol::SetListener");
 
   if(sock != nullptr and m_quicUdpBindingList.size() == 1)
     {
@@ -422,12 +442,14 @@ QuicL4Protocol::SetListener (Ptr<QuicSocketBase> sock)
 bool
 QuicL4Protocol::IsServer (void)  const
 {
+  NS_LOG_UNCOND("QuicL4Protocol::IsServer");
   return m_isServer;
 }
 
 const std::vector<Address>& 
 QuicL4Protocol::GetAuthAddresses () const
 {
+  NS_LOG_UNCOND("QuicL4Protocol::GetAuthAddresses");
   return m_authAddresses;
 }
 
@@ -435,6 +457,7 @@ void
 QuicL4Protocol::ForwardUp (Ptr<Socket> sock)
 {
   NS_LOG_FUNCTION (this);
+  NS_LOG_UNCOND("QuicL4Protocol::ForwardUp");
 
   Address from;
   Ptr<Packet> packet;
@@ -574,6 +597,7 @@ void
 QuicL4Protocol::SetRecvCallback (Callback<void, Ptr<Packet>, const QuicHeader&,  Address& > handler, Ptr<Socket> sock)
 {
   NS_LOG_FUNCTION (this);
+  NS_LOG_UNCOND("QuicL4Protocol::SetRecvCallback");
 
   m_socketHandlers.insert ( std::pair< Ptr<Socket>, Callback<void, Ptr<Packet>, const QuicHeader&, Address& > > (sock,handler));
   QuicUdpBindingList::iterator it;
@@ -600,6 +624,7 @@ QuicL4Protocol::SetRecvCallback (Callback<void, Ptr<Packet>, const QuicHeader&, 
 void
 QuicL4Protocol::NotifyNewAggregate ()
 {
+  NS_LOG_UNCOND("QuicL4Protocol::NotifyNewAggregate");
   NS_LOG_FUNCTION (this);
   Ptr<Node> node = this->GetObject<Node> ();
 
@@ -620,12 +645,14 @@ QuicL4Protocol::NotifyNewAggregate ()
 int
 QuicL4Protocol::GetProtocolNumber (void) const
 {
+  NS_LOG_UNCOND("QuicL4Protocol::GetProtocolNumber");
   return PROT_NUMBER;
 }
 
 void
 QuicL4Protocol::DoDispose (void)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::DoDispose");
   NS_LOG_FUNCTION (this);
   m_quicUdpBindingList.clear ();
 
@@ -638,6 +665,7 @@ QuicL4Protocol::DoDispose (void)
 Ptr<QuicSocketBase>
 QuicL4Protocol::CloneSocket (Ptr<QuicSocketBase> oldsock)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::CloneSocket");
   NS_LOG_FUNCTION (this);
   Ptr<QuicSocketBase> newsock = CopyObject<QuicSocketBase> (oldsock);
   NS_LOG_LOGIC (this << " cloned socket " << oldsock << " to socket " << newsock);
@@ -655,12 +683,14 @@ QuicL4Protocol::CloneSocket (Ptr<QuicSocketBase> oldsock)
 Ptr<Socket>
 QuicL4Protocol::CreateSocket ()
 {
+  NS_LOG_UNCOND("QuicL4Protocol::CreateSocket");
   return CreateSocket (m_congestionTypeId);
 }
 
 Ptr<Socket>
 QuicL4Protocol::CreateSocket (TypeId congestionTypeId)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::CreateSocket");
   NS_LOG_FUNCTION (this);
 
   ObjectFactory congestionAlgorithmFactory;
@@ -712,6 +742,7 @@ QuicL4Protocol::CreateSocket (TypeId congestionTypeId)
 Ptr<Socket>
 QuicL4Protocol::CreateUdpSocket ()
 {
+  NS_LOG_UNCOND("QuicL4Protocol::CreateUdpSocket");
   NS_LOG_FUNCTION (this);
   NS_ASSERT (m_node != 0);
 
@@ -724,6 +755,7 @@ QuicL4Protocol::CreateUdpSocket ()
 Ptr<Socket>
 QuicL4Protocol::CreateUdpSocket6 ()
 {
+  NS_LOG_UNCOND("QuicL4Protocol::CreateUdpSocket6");
   NS_LOG_FUNCTION (this);
   NS_ASSERT (m_node != 0);
 
@@ -739,6 +771,7 @@ QuicL4Protocol::ReceiveIcmp (Ipv4Address icmpSource, uint8_t icmpTtl,
                              Ipv4Address payloadSource,Ipv4Address payloadDestination,
                              const uint8_t payload[8])
 {
+  NS_LOG_UNCOND("QuicL4Protocol::ReceiveIcmp");
   NS_LOG_FUNCTION (this << icmpSource << (uint16_t) icmpTtl << (uint16_t) icmpType << (uint16_t) icmpCode << icmpInfo
                         << payloadSource << payloadDestination);
 }
@@ -749,6 +782,7 @@ QuicL4Protocol::ReceiveIcmp (Ipv6Address icmpSource, uint8_t icmpTtl,
                              Ipv6Address payloadSource,Ipv6Address payloadDestination,
                              const uint8_t payload[8])
 {
+  NS_LOG_UNCOND("QuicL4Protocol::ReceiveIcmp");
   NS_LOG_FUNCTION (this << icmpSource << (uint16_t) icmpTtl << (uint16_t) icmpType << (uint16_t) icmpCode << icmpInfo
                         << payloadSource << payloadDestination);
 
@@ -759,6 +793,7 @@ QuicL4Protocol::Receive (Ptr<Packet> packet,
                          Ipv4Header const &incomingIpHeader,
                          Ptr<Ipv4Interface> incomingInterface)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::Receive");
   NS_LOG_FUNCTION (this << packet << incomingIpHeader << incomingInterface);
   NS_FATAL_ERROR ("This call should not be used: QUIC packets need to go through a UDP socket");
   return IpL4Protocol::RX_OK;
@@ -769,6 +804,7 @@ QuicL4Protocol::Receive (Ptr<Packet> packet,
                          Ipv6Header const &incomingIpHeader,
                          Ptr<Ipv6Interface> interface)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::Receive");
   NS_LOG_FUNCTION (this << packet << incomingIpHeader.GetSourceAddress () <<
                    incomingIpHeader.GetDestinationAddress ());
   NS_FATAL_ERROR ("This call should not be used: QUIC packets need to go through a UDP socket");
@@ -778,6 +814,7 @@ QuicL4Protocol::Receive (Ptr<Packet> packet,
 void
 QuicL4Protocol::SendPacket (Ptr<QuicSocketBase> socket, Ptr<Packet> pkt, const QuicHeader &outgoing) const
 {
+  NS_LOG_UNCOND("QuicL4Protocol::SendPacket");
   NS_LOG_FUNCTION (this << socket);
   NS_LOG_LOGIC (this
                 << " sending seq " << outgoing.GetPacketNumber ()
@@ -811,6 +848,7 @@ QuicL4Protocol::SendPacket (Ptr<QuicSocketBase> socket, Ptr<Packet> pkt, const Q
 bool
 QuicL4Protocol::RemoveSocket (Ptr<QuicSocketBase> socket)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::RemoveSocket");
   NS_LOG_FUNCTION (this);
 
   QuicUdpBindingList::iterator iter;
@@ -848,6 +886,7 @@ QuicL4Protocol::RemoveSocket (Ptr<QuicSocketBase> socket)
 Ipv4EndPoint *
 QuicL4Protocol::Allocate (void)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::Allocate");
   NS_LOG_FUNCTION (this);
   return m_endPoints->Allocate ();
 }
@@ -855,6 +894,7 @@ QuicL4Protocol::Allocate (void)
 Ipv4EndPoint *
 QuicL4Protocol::Allocate (Ipv4Address address)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::Allocate");
   NS_LOG_FUNCTION (this << address);
   return m_endPoints->Allocate (address);
 }
@@ -862,6 +902,7 @@ QuicL4Protocol::Allocate (Ipv4Address address)
 Ipv4EndPoint *
 QuicL4Protocol::Allocate (Ptr<NetDevice> boundNetDevice, uint16_t port)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::Allocate");
   NS_LOG_FUNCTION (this << boundNetDevice << port);
   return m_endPoints->Allocate (boundNetDevice, port);
 }
@@ -869,6 +910,7 @@ QuicL4Protocol::Allocate (Ptr<NetDevice> boundNetDevice, uint16_t port)
 Ipv4EndPoint *
 QuicL4Protocol::Allocate (Ptr<NetDevice> boundNetDevice, Ipv4Address address, uint16_t port)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::Allocate");
   NS_LOG_FUNCTION (this << boundNetDevice << address << port);
   return m_endPoints->Allocate (boundNetDevice, address, port);
 }
@@ -878,6 +920,7 @@ QuicL4Protocol::Allocate (Ptr<NetDevice> boundNetDevice,
                          Ipv4Address localAddress, uint16_t localPort,
                          Ipv4Address peerAddress, uint16_t peerPort)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::Allocate");
   NS_LOG_FUNCTION (this << boundNetDevice << localAddress << localPort << peerAddress << peerPort);
   return m_endPoints->Allocate (boundNetDevice,
                                 localAddress, localPort,
@@ -887,6 +930,7 @@ QuicL4Protocol::Allocate (Ptr<NetDevice> boundNetDevice,
 Ipv6EndPoint *
 QuicL4Protocol::Allocate6 (void)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::Allocate6");
   NS_LOG_FUNCTION (this);
   return m_endPoints6->Allocate ();
 }
@@ -894,6 +938,7 @@ QuicL4Protocol::Allocate6 (void)
 Ipv6EndPoint *
 QuicL4Protocol::Allocate6 (Ipv6Address address)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::Allocate6");
   NS_LOG_FUNCTION (this << address);
   return m_endPoints6->Allocate (address);
 }
@@ -901,6 +946,7 @@ QuicL4Protocol::Allocate6 (Ipv6Address address)
 Ipv6EndPoint *
 QuicL4Protocol::Allocate6 (Ptr<NetDevice> boundNetDevice, uint16_t port)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::Allocate6");
   NS_LOG_FUNCTION (this << boundNetDevice << port);
   return m_endPoints6->Allocate (boundNetDevice, port);
 }
@@ -908,6 +954,7 @@ QuicL4Protocol::Allocate6 (Ptr<NetDevice> boundNetDevice, uint16_t port)
 Ipv6EndPoint *
 QuicL4Protocol::Allocate6 (Ptr<NetDevice> boundNetDevice, Ipv6Address address, uint16_t port)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::Allocate6");
   NS_LOG_FUNCTION (this << boundNetDevice << address << port);
   return m_endPoints6->Allocate (boundNetDevice, address, port);
 }
@@ -917,6 +964,7 @@ QuicL4Protocol::Allocate6 (Ptr<NetDevice> boundNetDevice,
                           Ipv6Address localAddress, uint16_t localPort,
                           Ipv6Address peerAddress, uint16_t peerPort)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::Allocate6");
   NS_LOG_FUNCTION (this << boundNetDevice << localAddress << localPort << peerAddress << peerPort);
   return m_endPoints6->Allocate (boundNetDevice,
                                  localAddress, localPort,
@@ -926,6 +974,7 @@ QuicL4Protocol::Allocate6 (Ptr<NetDevice> boundNetDevice,
 void
 QuicL4Protocol::DeAllocate (Ipv4EndPoint *endPoint)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::DeAllocate");
   NS_LOG_FUNCTION (this << endPoint);
   m_endPoints->DeAllocate (endPoint);
 }
@@ -933,6 +982,7 @@ QuicL4Protocol::DeAllocate (Ipv4EndPoint *endPoint)
 void
 QuicL4Protocol::DeAllocate (Ipv6EndPoint *endPoint)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::DeAllocate");
   NS_LOG_FUNCTION (this << endPoint);
   m_endPoints6->DeAllocate (endPoint);
 }
@@ -940,6 +990,7 @@ QuicL4Protocol::DeAllocate (Ipv6EndPoint *endPoint)
 void
 QuicL4Protocol::SetDownTarget (IpL4Protocol::DownTargetCallback callback)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::SetDownTarget");
   NS_LOG_FUNCTION (this);
   m_downTarget = callback;
 }
@@ -947,6 +998,7 @@ QuicL4Protocol::SetDownTarget (IpL4Protocol::DownTargetCallback callback)
 IpL4Protocol::DownTargetCallback
 QuicL4Protocol::GetDownTarget (void) const
 {
+  NS_LOG_UNCOND("QuicL4Protocol::GetDownTarget");
   NS_LOG_FUNCTION (this);
   return m_downTarget;
 }
@@ -954,6 +1006,7 @@ QuicL4Protocol::GetDownTarget (void) const
 void
 QuicL4Protocol::SetDownTarget6 (IpL4Protocol::DownTargetCallback6 callback)
 {
+  NS_LOG_UNCOND("QuicL4Protocol::SetDownTarget6");
   NS_LOG_FUNCTION (this);
   m_downTarget6 = callback;
 }
@@ -961,12 +1014,14 @@ QuicL4Protocol::SetDownTarget6 (IpL4Protocol::DownTargetCallback6 callback)
 IpL4Protocol::DownTargetCallback6
 QuicL4Protocol::GetDownTarget6 (void) const
 {
+  NS_LOG_UNCOND("QuicL4Protocol::GetDownTarget6");
   return m_downTarget6;
 }
 
 bool
 QuicL4Protocol::Is0RTTHandshakeAllowed () const
 {
+  NS_LOG_UNCOND("QuicL4Protocol::Is0RTTHandshakeAllowed");
   return m_0RTTHandshakeStart;
 }
 
