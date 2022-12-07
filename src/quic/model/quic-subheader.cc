@@ -66,7 +66,7 @@ QuicSubheader::~QuicSubheader ()
 TypeId
 QuicSubheader::GetTypeId (void)
 {
-  NS_LOG_UNCOND("QuicSubheader::GetTypeId");
+  //NS_LOG_UNCOND("QuicSubheader::GetTypeId");
   static TypeId tid = TypeId ("ns3::QuicSubHeader")
     .SetParent<Header> ()
     .SetGroupName ("Internet")
@@ -84,7 +84,7 @@ QuicSubheader::GetInstanceTypeId (void) const
 std::string
 QuicSubheader::FrameTypeToString () const
 {
-  NS_LOG_UNCOND("QuicSubheader::FrameTypeToString");
+  //NS_LOG_UNCOND("QuicSubheader::FrameTypeToString");
   static const char* frameTypeNames[24] = {
     "PADDING",
     "RST_STREAM",
@@ -121,7 +121,7 @@ QuicSubheader::FrameTypeToString () const
 std::string
 QuicSubheader::TransportErrorCodeToString () const
 {
-  NS_LOG_UNCOND("QuicSubheader::TransportErrorCodeToString");
+  //NS_LOG_UNCOND("QuicSubheader::TransportErrorCodeToString");
   static const char* transportErrorCodeNames[13] = {
     "NO_ERROR",
     "INTERNAL_ERROR",

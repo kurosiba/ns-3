@@ -56,7 +56,7 @@ QuicTransportParameters::~QuicTransportParameters ()
 TypeId
 QuicTransportParameters::GetTypeId (void)
 {
-  NS_LOG_UNCOND("QuicTransportParameters::GetTypeId");
+  //NS_LOG_UNCOND("QuicTransportParameters::GetTypeId");
   static TypeId tid = TypeId ("ns3::QuicTransportParameters")
     .SetParent<Header> ()
     .SetGroupName ("Internet")

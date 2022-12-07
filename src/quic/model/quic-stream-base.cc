@@ -49,7 +49,7 @@ NS_OBJECT_ENSURE_REGISTERED (QuicStreamBase);
 TypeId
 QuicStreamBase::GetTypeId (void)
 {
-  NS_LOG_UNCOND("QuicStreamBase::GetTypeId");
+  //NS_LOG_UNCOND("QuicStreamBase::GetTypeId");
   static TypeId tid = TypeId ("ns3::QuicStreamBase")
     .SetParent<QuicStream> ()
     .SetGroupName ("Internet")
@@ -693,7 +693,7 @@ QuicStreamBase::SetConnectionId (uint64_t connId)
 std::string
 QuicStreamBase::StreamDirectionTypeToString () const
 {
-  NS_LOG_UNCOND("QuicStreamBase::StreamDirectionTypeToString");
+  //NS_LOG_UNCOND("QuicStreamBase::StreamDirectionTypeToString");
   static const char* StreamDirectionTypeNames[6] = {
     "SENDER",
     "RECEIVER",

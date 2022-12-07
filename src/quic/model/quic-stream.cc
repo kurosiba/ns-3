@@ -46,7 +46,7 @@ QuicStream::QuicStreamStateName[QuicStream::LAST_STATE] = {"IDLE", "OPEN", "SEND
 TypeId
 QuicStream::GetTypeId (void)
 {
-  NS_LOG_UNCOND("QuicStream::GetTypeId");
+  //NS_LOG_UNCOND("QuicStream::GetTypeId");
   static TypeId tid = TypeId ("ns3::QuicStream")
     .SetParent<Object> ()
     .SetGroupName ("Internet")

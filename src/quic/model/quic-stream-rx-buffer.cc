@@ -71,7 +71,7 @@ NS_OBJECT_ENSURE_REGISTERED (QuicStreamRxBuffer);
 TypeId
 QuicStreamRxBuffer::GetTypeId (void)
 {
-  NS_LOG_UNCOND("QuicStreamRxBuffer::GetTypeId");
+  //NS_LOG_UNCOND("QuicStreamRxBuffer::GetTypeId");
   static TypeId tid =
     TypeId ("ns3::QuicStreamRxBuffer")
       .SetParent<Object> ()

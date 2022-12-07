@@ -30,7 +30,36 @@ void TraceThroughput(Ptr<Application> app, Ptr<OutputStreamWrapper> stream)
 int main(int argc, char *argv[])
 {
   LogComponentEnable("minumum", LOG_LEVEL_ALL);
-  //LogComponentEnable("Queue", LOG_LEVEL_ALL);
+  
+  // LogComponentEnableAll(LOG_PREFIX_FUNC);
+  // LogComponentEnableAll(LOG_PREFIX_TIME);
+  // LogComponentEnableAll(LOG_PREFIX_NODE);
+  // LogComponentEnableAll(LOG_PREFIX_LEVEL);
+  // LogComponentEnableAll(LOG_PREFIX_ALL);
+
+  // LogComponentEnable("IpL4Protocol", LOG_LEVEL_ALL);
+  // LogComponentEnable("Socket", LOG_LEVEL_ALL);
+  
+  // LogComponentEnable("QuicClient", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicEchoClientApplication", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicEchoServerApplication", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicServer", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicHelper", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicCongestionControl", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicL4Protocol", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicL5Protocol", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicSocketBase", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicSocketFactory", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicSocketRxBuffer", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicSocketTxBuffer", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicSocket", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicStreamBase", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicStreamRxBuffer", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicStreamTxBuffer", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicStream", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicSubheader", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicTransportParameters", LOG_LEVEL_ALL);
+  // LogComponentEnable("QuicHeader", LOG_LEVEL_ALL);
 
   CommandLine cmd;
   cmd.Parse(argc, argv);
@@ -100,19 +129,19 @@ int main(int argc, char *argv[])
   auto interface = address.Assign(devices);
   auto tcpSinkAddress = interface.Get(1);
 
-  const int tcp_sink_port = 3000;
+  const int quic_sink_port = 443;
   const uint128_t bulk_send_max_bytes = 1 << 30;
   const double max_simu_time = 65.0;
 
   // TCPを送信する設定
-  BulkSendHelper bulkSend("ns3::TcpSocketFactory", InetSocketAddress(interface.GetAddress(1), tcp_sink_port));
+  BulkSendHelper bulkSend("ns3::QuicSocketFactory", InetSocketAddress(interface.GetAddress(1), quic_sink_port));
   bulkSend.SetAttribute("MaxBytes", UintegerValue(bulk_send_max_bytes)); // MaxBytesに UintegerValue(bulk_send_max_bytes)を代入
   ApplicationContainer bulkSendApp = bulkSend.Install(sources.Get(0));   // sources[0]に
   bulkSendApp.Start(Seconds(0.0));
   bulkSendApp.Stop(Seconds(max_simu_time));
 
   // TCPを受信する設定
-  PacketSinkHelper TCPsink("ns3::TcpSocketFactory", InetSocketAddress(Ipv4Address::GetAny(), tcp_sink_port));
+  PacketSinkHelper TCPsink("ns3::QuicSocketFactory", InetSocketAddress(Ipv4Address::GetAny(), quic_sink_port));
   ApplicationContainer TCPSinkApp = TCPsink.Install(sinks.Get(0));
   TCPSinkApp.Start(Seconds(0.0)); // sinks[0]のノードがTCPを受信するアプリケーションの開始時刻を0秒に設定．シミュレーション開始後，すぐに開始
   TCPSinkApp.Stop(Seconds(max_simu_time));
@@ -128,7 +157,9 @@ int main(int argc, char *argv[])
 
   if (shrew)
   {
+    //NS_LOG_UNCOND("before");
     OnOffHelper onoff("ns3::UdpSocketFactory", Address(InetSocketAddress(interface.GetAddress(1), udp_sink_port)));
+    //NS_LOG_UNCOND("after");
     onoff.SetConstantRate(DataRate(attacker_rate), 50U);
     onoff.SetAttribute("OnTime", StringValue("ns3::ConstantRandomVariable[Constant=" + on_time + "]"));
     onoff.SetAttribute("OffTime", StringValue("ns3::ConstantRandomVariable[Constant=" + off_time + "]"));
@@ -148,11 +179,11 @@ int main(int argc, char *argv[])
   AsciiTraceHelper ascii;
 
   // make trace file's name
-  std::string fname = "data/minimum/tcp.throughput.csv";
+  std::string fname = "data/quic-minimum/tcp.throughput.csv";
   Ptr<OutputStreamWrapper> stream = ascii.CreateFileStream(fname);
   Simulator::Schedule(Seconds(0.1), &TraceThroughput, sinks.Get(0)->GetApplication(0), stream);
 
-  LinkBottoleNeck.EnablePcapAll("data/minimum/pcaps");
+  LinkBottoleNeck.EnablePcapAll("data/quic-minimum/pcaps");
 
   /* Node info */
   NS_LOG_INFO("source: " << sources.Get(0)->GetId());
@@ -160,6 +191,9 @@ int main(int argc, char *argv[])
   NS_LOG_INFO("attacker: " << attackers.Get(0)->GetId());
   NS_LOG_INFO("Bottleneck router(0) : " << routers.Get(0)->GetId());
   NS_LOG_INFO("Bottleneck router(1) : " << routers.Get(1)->GetId());
+
+  //NS_LOG_INFO("source: " << sources.Get(0)->GetApplication());
+  //NS_LOG_INFO("sink: " << sinks.Get(0)->GetApplication());
 
   Simulator::Stop(Seconds(max_simu_time));
   Simulator::Run();

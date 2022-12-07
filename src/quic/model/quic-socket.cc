@@ -48,7 +48,7 @@ QuicSocket::QuicStateName[QuicSocket::LAST_STATE] = {
 TypeId
 QuicSocket::GetTypeId (void)
 {
-  NS_LOG_UNCOND("QuicSocket::GetTypeId");
+  //NS_LOG_UNCOND("QuicSocket::GetTypeId");
   static TypeId tid = TypeId ("ns3::QuicSocket")
     .SetParent<Socket> ()
     .SetGroupName ("Internet")

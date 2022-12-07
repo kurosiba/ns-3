@@ -1,17 +1,22 @@
+#include <cstring>
+#include <cstdlib>
 
 #include "ns3/nstime.h"
 #include "ns3/core-module.h"
 #include "ns3/network-module.h"
 #include "ns3/internet-module.h"
+#include "ns3/quic-module.h"
 #include "ns3/point-to-point-module.h"
 #include "ns3/applications-module.h"
-#include "ns3/ipv4-global-routing-helper.h"
-#include <cstring>
-#include <cstdlib>
+
+// #include "ns3/ipv4-global-routing-helper.h"
+// #include "ns3/tcp-header.h"
+// #include "ns3/udp-header.h"
+
 
 using namespace ns3;
 
-NS_LOG_COMPONENT_DEFINE("minumum");
+NS_LOG_COMPONENT_DEFINE("quic-minumum");
 
 uint32_t oldTotalBytes = 0;
 uint32_t newTotalBytes;
@@ -29,10 +34,10 @@ void TraceThroughput(Ptr<Application> app, Ptr<OutputStreamWrapper> stream)
 
 int main(int argc, char *argv[])
 {
-  LogComponentEnable("minumum", LOG_LEVEL_ALL);
+  LogComponentEnable("quic-minumum", LOG_LEVEL_ALL);
   
-   LogComponentEnableAll(LOG_PREFIX_FUNC);
-   LogComponentEnableAll(LOG_PREFIX_TIME);
+  // LogComponentEnableAll(LOG_PREFIX_FUNC);
+  // LogComponentEnableAll(LOG_PREFIX_TIME);
   // LogComponentEnableAll(LOG_PREFIX_NODE);
   // LogComponentEnableAll(LOG_PREFIX_LEVEL);
   // LogComponentEnableAll(LOG_PREFIX_ALL);
@@ -93,8 +98,17 @@ int main(int argc, char *argv[])
   // LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "Mode", EnumValue(QueueBase::QUEUE_MODE_BYTES), "MaxBytes", UintegerValue(bdp));
   //Link100Mbps20ms.SetQueue("ns3::DropTailQueue", "MaxSize", QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, 50)));
 
-  InternetStackHelper stack;
-  stack.InstallAll();
+  InternetStackHelper stacks;
+  stacks.Install(attackers);
+
+  /*
+  QUICのHelper
+  */
+  QuicHelper stack;
+  stack.InstallQuic(sources);
+  stack.InstallQuic(sinks);
+  //stack.InstallQuic(attackers);
+  stack.InstallQuic(routers);
 
   Ipv4AddressHelper address;
   address.SetBase("10.0.0.0", "255.255.255.0");
@@ -129,25 +143,25 @@ int main(int argc, char *argv[])
   auto interface = address.Assign(devices);
   auto tcpSinkAddress = interface.Get(1);
 
-  const int tcp_sink_port = 3000;
+  const int quic_sink_port = 443;
   const uint128_t bulk_send_max_bytes = 1 << 30;
-   const double max_simu_time = 30.0;//65.0
+  const double max_simu_time = 65.0;//65.0
 
   // TCPを送信する設定
-  BulkSendHelper bulkSend("ns3::TcpSocketFactory", InetSocketAddress(interface.GetAddress(1), tcp_sink_port));
+  BulkSendHelper bulkSend("ns3::QuicSocketFactory", InetSocketAddress(interface.GetAddress(1), quic_sink_port));
   bulkSend.SetAttribute("MaxBytes", UintegerValue(bulk_send_max_bytes)); // MaxBytesに UintegerValue(bulk_send_max_bytes)を代入
   ApplicationContainer bulkSendApp = bulkSend.Install(sources.Get(0));   // sources[0]に
   bulkSendApp.Start(Seconds(0.0));
   bulkSendApp.Stop(Seconds(max_simu_time));
 
   // TCPを受信する設定
-  PacketSinkHelper TCPsink("ns3::TcpSocketFactory", InetSocketAddress(Ipv4Address::GetAny(), tcp_sink_port));
-  ApplicationContainer TCPSinkApp = TCPsink.Install(sinks.Get(0));
-  TCPSinkApp.Start(Seconds(0.0)); // sinks[0]のノードがTCPを受信するアプリケーションの開始時刻を0秒に設定．シミュレーション開始後，すぐに開始
-  TCPSinkApp.Stop(Seconds(max_simu_time));
+  PacketSinkHelper QUICsink("ns3::QuicSocketFactory", InetSocketAddress(Ipv4Address::GetAny(), quic_sink_port));
+  ApplicationContainer QUICSinkApp = QUICsink.Install(sinks.Get(0));
+  QUICSinkApp.Start(Seconds(0.0)); // sinks[0]のノードがTCPを受信するアプリケーションの開始時刻を0秒に設定．シミュレーション開始後，すぐに開始
+  QUICSinkApp.Stop(Seconds(max_simu_time));
 
   // UDP On-Off Application - Application used by attacker (eve) to create the low-rate bursts.
-  bool shrew = true;
+  bool shrew = false;
   const int udp_sink_port = 5000;
   const std::string attacker_rate = "62500kbps";//62500kbps
   const double attacker_start = 5.0; // シミュレーションで攻撃が開始する時間
@@ -177,11 +191,11 @@ int main(int argc, char *argv[])
   AsciiTraceHelper ascii;
 
   // make trace file's name
-  std::string fname = "data/minimum/tcp.throughput.csv";
+  std::string fname = "data/quic-minimum/tcp.throughput.csv";
   Ptr<OutputStreamWrapper> stream = ascii.CreateFileStream(fname);
   Simulator::Schedule(Seconds(0.1), &TraceThroughput, sinks.Get(0)->GetApplication(0), stream);
 
-  LinkBottoleNeck.EnablePcapAll("data/minimum/pcaps");
+  LinkBottoleNeck.EnablePcapAll("data/quic-minimum/pcaps");
 
   /* Node info */
   NS_LOG_INFO("source: " << sources.Get(0)->GetId());
