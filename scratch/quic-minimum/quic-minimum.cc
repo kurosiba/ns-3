@@ -8,6 +8,7 @@
 #include "ns3/quic-module.h"
 #include "ns3/point-to-point-module.h"
 #include "ns3/applications-module.h"
+#include "ns3/traffic-control-module.h"
 
 // #include "ns3/ipv4-global-routing-helper.h"
 // #include "ns3/tcp-header.h"
@@ -69,6 +70,12 @@ int main(int argc, char *argv[])
   CommandLine cmd;
   cmd.Parse(argc, argv);
 
+  uint32_t mtu_bytes = 1400;
+  std::string bandwidth = "10Mbps";
+  std::string delay = "20ms";
+  std::string access_bandwidth = "100Mbps";
+  std::string access_delay = "20ms";
+
   Time::SetResolution(Time::NS);
   Config::SetDefault("ns3::TcpL4Protocol::SocketType", StringValue("ns3::TcpNewReno"));
   //Config::SetDefault ("ns3::QueueBase::Mode", StringValue ("QUEUE_MODE_PACKETS"));
@@ -83,13 +90,22 @@ int main(int argc, char *argv[])
   attackers.Create(1);
   routers.Create(2);
 
+  // DataRate access_b (access_bandwidth);
+  // DataRate bottle_b (bandwidth);
+  // Time access_d (access_delay);
+  // Time bottle_d (delay);
+
+  // uint32_t size = (std::min (access_b, bottle_b).GetBitRate () / 8) * ((access_d + bottle_d) * 2).GetSeconds () * 2000;
+
+  //Config::SetDefault ("ns3::DropTailQueue::MaxSize", QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, size / mtu_bytes)));
+
   //const uint32_t bdp = 10 * 1e6 * 20 * 3 * 2 / 1000 / 8;
   PointToPointHelper LinkBottoleNeck;
   LinkBottoleNeck.SetDeviceAttribute("DataRate", StringValue("10Mbps")); // リンク帯域幅
   LinkBottoleNeck.SetChannelAttribute("Delay", StringValue("20ms"));     // リンクの片方向遅延
   //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "MaxSize", QueueSizeValue (QueueSize (QueueSizeUnit::BYTES, 1000000)));
-  LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "MaxSize", QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, 50)));
-  //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "Mode", EnumValue(QueueBase::QUEUE_MODE_PACKETS), "MaxPackets", UintegerValue(50));
+  //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "MaxSize", QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, size / mtu_bytes)));
+  LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "Mode", EnumValue(QueueBase::QUEUE_MODE_PACKETS), "MaxPackets", UintegerValue(50));
   //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "Mode", EnumValue(QueueBase::QUEUE_MODE_BYTES), "MaxBytes", UintegerValue(bdp));
 
   PointToPointHelper Link100Mbps20ms;
@@ -110,13 +126,28 @@ int main(int argc, char *argv[])
   //stack.InstallQuic(attackers);
   stack.InstallQuic(routers);
 
+  TrafficControlHelper tchPfifo;
+  tchPfifo.SetRootQueueDisc ("ns3::PfifoFastQueueDisc");
+
   Ipv4AddressHelper address;
   address.SetBase("10.0.0.0", "255.255.255.0");
   
+  DataRate access_b (access_bandwidth);
+  DataRate bottle_b (bandwidth);
+  Time access_d (access_delay);
+  Time bottle_d (delay);
+
+  uint32_t size = (std::min (access_b, bottle_b).GetBitRate () / 8) *
+    ((access_d + bottle_d) * 2).GetSeconds () * 2000;
+
+  Config::SetDefault ("ns3::PfifoFastQueueDisc::MaxSize",
+                      QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, size / mtu_bytes)));//DropTailに作用しているみたい
+
   NetDeviceContainer devices;
 
   /* router 同士の接続 */
   devices = LinkBottoleNeck.Install(routers.Get(0), routers.Get(1));
+  tchPfifo.Install (devices);
   address.NewNetwork();
   address.Assign(devices);
 
@@ -124,6 +155,7 @@ int main(int argc, char *argv[])
   for (uint32_t i = 0; i < sources.GetN(); i++)
   {    
     devices = Link100Mbps20ms.Install(sources.Get(i), routers.Get(0));
+    tchPfifo.Install (devices);
     address.NewNetwork();
     address.Assign(devices);    
   }
@@ -132,6 +164,7 @@ int main(int argc, char *argv[])
   for (uint32_t i = 0; i < attackers.GetN(); i++)
   {
     devices = Link100Mbps20ms.Install(attackers.Get(i), routers.Get(0));
+    tchPfifo.Install (devices);
     address.NewNetwork();
     address.Assign(devices);
   }
@@ -145,13 +178,13 @@ int main(int argc, char *argv[])
 
   const int quic_sink_port = 443;
   const uint128_t bulk_send_max_bytes = 1 << 30;
-  const double max_simu_time = 65.0;//65.0
+  const double max_simu_time = 15.0;//65.0
 
   // TCPを送信する設定
   BulkSendHelper bulkSend("ns3::QuicSocketFactory", InetSocketAddress(interface.GetAddress(1), quic_sink_port));
   bulkSend.SetAttribute("MaxBytes", UintegerValue(bulk_send_max_bytes)); // MaxBytesに UintegerValue(bulk_send_max_bytes)を代入
   ApplicationContainer bulkSendApp = bulkSend.Install(sources.Get(0));   // sources[0]に
-  bulkSendApp.Start(Seconds(0.0));
+  bulkSendApp.Start(Seconds(2.0));
   bulkSendApp.Stop(Seconds(max_simu_time));
 
   // TCPを受信する設定
@@ -161,10 +194,10 @@ int main(int argc, char *argv[])
   QUICSinkApp.Stop(Seconds(max_simu_time));
 
   // UDP On-Off Application - Application used by attacker (eve) to create the low-rate bursts.
-  bool shrew = false;
+  bool shrew = true;
   const int udp_sink_port = 5000;
   const std::string attacker_rate = "62500kbps";//62500kbps
-  const double attacker_start = 5.0; // シミュレーションで攻撃が開始する時間
+  const double attacker_start = 0.0; // シミュレーションで攻撃が開始する時間
   const float burst_period = 1.0;    // バースト間隔T
   const std::string on_time = "0.3"; // バースト長L
   const std::string off_time = std::to_string(burst_period - stof(on_time));
