@@ -70,11 +70,11 @@ int main(int argc, char *argv[])
   CommandLine cmd;
   cmd.Parse(argc, argv);
 
-  // uint32_t mtu_bytes = 1400;
-  // std::string bandwidth = "10Mbps";
-  // std::string delay = "20ms";
-  // std::string access_bandwidth = "100Mbps";
-  // std::string access_delay = "20ms";
+  uint32_t mtu_bytes = 1400;
+  std::string bandwidth = "10Mbps";
+  std::string delay = "20ms";
+  std::string access_bandwidth = "100Mbps";
+  std::string access_delay = "20ms";
 
   Time::SetResolution(Time::NS);
   Config::SetDefault("ns3::TcpL4Protocol::SocketType", StringValue("ns3::TcpNewReno"));
@@ -90,21 +90,19 @@ int main(int argc, char *argv[])
   attackers.Create(1);
   routers.Create(2);
 
-  // DataRate access_b (access_bandwidth);
-  // DataRate bottle_b (bandwidth);
-  // Time access_d (access_delay);
-  // Time bottle_d (delay);
+  DataRate access_b (access_bandwidth);
+  DataRate bottle_b (bandwidth);
+  Time access_d (access_delay);
+  Time bottle_d (delay);
 
-  // uint32_t size = (std::min (access_b, bottle_b).GetBitRate () / 8) * ((access_d + bottle_d) * 2).GetSeconds () * 2000;
-
-  //Config::SetDefault ("ns3::DropTailQueue::MaxSize", QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, size / mtu_bytes)));
+  uint32_t size = (std::min (access_b, bottle_b).GetBitRate () / 8) * ((access_d + bottle_d) * 2).GetSeconds () * 2000;//* 2000;
 
   //const uint32_t bdp = 10 * 1e6 * 20 * 3 * 2 / 1000 / 8;
   PointToPointHelper LinkBottoleNeck;
   LinkBottoleNeck.SetDeviceAttribute("DataRate", StringValue("10Mbps")); // リンク帯域幅
   LinkBottoleNeck.SetChannelAttribute("Delay", StringValue("20ms"));     // リンクの片方向遅延
   //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "MaxSize", QueueSizeValue (QueueSize (QueueSizeUnit::BYTES, 1000000)));
-  //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "MaxSize", QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, size / mtu_bytes)));
+  LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "MaxSize", QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, size / mtu_bytes)));
   //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "Mode", EnumValue(QueueBase::QUEUE_MODE_PACKETS), "MaxPackets", UintegerValue(50));
   //LinkBottoleNeck.SetQueue("ns3::DropTailQueue", "Mode", EnumValue(QueueBase::QUEUE_MODE_BYTES), "MaxBytes", UintegerValue(bdp));
 
@@ -138,16 +136,16 @@ int main(int argc, char *argv[])
   // Time bottle_d (delay);
 
   // uint32_t size = (std::min (access_b, bottle_b).GetBitRate () / 8) *
-  //   ((access_d + bottle_d) * 2).GetSeconds ();
+  //   ((access_d + bottle_d) * 2).GetSeconds () * 2000;
 
-  Config::SetDefault ("ns3::PfifoFastQueueDisc::MaxSize",
-                      QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, 50/*size / mtu_bytes*/)));//DropTailに作用しているみたい
+  // Config::SetDefault ("ns3::PfifoFastQueueDisc::MaxSize",
+  //                     QueueSizeValue (QueueSize (QueueSizeUnit::PACKETS, size / mtu_bytes)));//DropTailに作用しているみたい
 
   NetDeviceContainer devices;
 
   /* router 同士の接続 */
   devices = LinkBottoleNeck.Install(routers.Get(0), routers.Get(1));
-  tchPfifo.Install (devices);
+  //tchPfifo.Install (devices);
   address.NewNetwork();
   address.Assign(devices);
 
@@ -155,7 +153,7 @@ int main(int argc, char *argv[])
   for (uint32_t i = 0; i < sources.GetN(); i++)
   {    
     devices = Link100Mbps20ms.Install(sources.Get(i), routers.Get(0));
-    tchPfifo.Install (devices);
+    //tchPfifo.Install (devices);
     address.NewNetwork();
     address.Assign(devices);    
   }
@@ -224,11 +222,11 @@ int main(int argc, char *argv[])
   AsciiTraceHelper ascii;
 
   // make trace file's name
-  std::string fname = "data/quic-minimum/tcp.throughput.csv";
+  std::string fname = "data/quic-minimum/DropTail/tcp.throughput.csv";
   Ptr<OutputStreamWrapper> stream = ascii.CreateFileStream(fname);
   Simulator::Schedule(Seconds(0.1), &TraceThroughput, sinks.Get(0)->GetApplication(0), stream);
 
-  LinkBottoleNeck.EnablePcapAll("data/quic-minimum/pcap");
+  LinkBottoleNeck.EnablePcapAll("data/quic-minimum/DropTail/pcaps");
 
   /* Node info */
   NS_LOG_INFO("source: " << sources.Get(0)->GetId());

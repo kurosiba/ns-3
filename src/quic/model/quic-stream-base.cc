@@ -480,8 +480,10 @@ QuicStreamBase::Recv (Ptr<Packet> frame, const QuicSubheader& sub, Address &addr
             {
               // Insert failed: No data or RX buffer full
               NS_LOG_INFO ("Dropping packet due to full RX buffer");
+              if (frame->GetSize() > m_rxBuffer->Available()) {
               // Abort simulation!
               NS_ABORT_MSG ("Aborting Connection");
+              }
             }
         }
 
